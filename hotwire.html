@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hotwire: Street Combat</title>
+<link rel="icon" href="data:,">
+<style>
+@font-face{font-family:"SairaSEBI";src:url(assets/fonts/SairaSemiExpanded-BlackItalic.ttf);font-display:block}
+@font-face{font-family:"SairaXC";src:url(assets/fonts/SairaExtraCondensed-Bold.ttf);font-display:block}
+@font-face{font-family:"SairaSC";src:url(assets/fonts/SairaSemiCondensed-SemiBold.ttf);font-display:block}
+@font-face{font-family:"Inter";src:url(assets/fonts/Inter-Regular.otf);font-display:swap}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#020207;color:#fff}
+body{font:400 16px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+canvas#gl{position:fixed;inset:0;width:100%;height:100dvh;display:block}
+#track{height:1500vh}
+.ui{position:fixed;z-index:2;pointer-events:none}
+.studio{pointer-events:auto;color:#fff;text-decoration:none;left:clamp(14px,2vw,30px);top:clamp(12px,1.8vw,26px);display:flex;align-items:center;gap:12px;padding:11px 18px 10px 14px;font:600 13px/1 "SairaSC",system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;background:rgba(8,8,14,.55);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .2s,border-color .2s}
+.studio::before{content:"";width:8px;height:8px;border-left:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .2s}
+.studio:hover,.studio:focus-visible{background:#fff;color:#08080e;border-color:#fff}.studio:hover::before,.studio:focus-visible::before{transform:translateX(-4px) rotate(45deg)}
+.end .back{display:inline-block;margin-top:26px;padding:13px 22px 12px;color:#fff;text-decoration:none;font:600 13px/1 "SairaSC",system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;border:1px solid rgba(255,255,255,.4);transition:background .2s,color .2s}.end .back:hover,.end .back:focus-visible{background:#fff;color:#08080e}
+.hint{left:50%;bottom:clamp(20px,4vh,44px);transform:translateX(-50%);font:400 13px/1 "SairaSC";letter-spacing:.22em;text-transform:uppercase;color:#c8c4e6;display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .6s}
+.hint i{width:1px;height:38px;background:linear-gradient(#ffb347,rgba(255,179,71,0));animation:drip 1.8s cubic-bezier(.6,0,.3,1) infinite;transform-origin:top}
+@keyframes drip{0%{transform:scaleY(0)}55%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
+.line{left:clamp(16px,2.2vw,34px);bottom:clamp(20px,4vh,44px);max-width:30ch;font-size:clamp(15px,1.15vw,18px);color:#d9d6ee;opacity:0;transition:opacity .7s}
+.line b{display:block;font:400 clamp(26px,3vw,46px)/1 "SairaXC";letter-spacing:.02em;text-transform:uppercase;color:#fff;margin-bottom:8px}
+.end{inset:0;display:grid;place-items:center;text-align:center;background:#020207;opacity:0}
+.end div{width:min(74vw,900px)}
+.end img{width:100%;height:auto;display:block}
+.end p{font:400 clamp(20px,2.3vw,34px)/1 "SairaXC";letter-spacing:.06em;text-transform:uppercase;margin-top:-1vw}
+.end nav{margin-top:22px;display:flex;gap:26px;justify-content:center;flex-wrap:wrap;font-size:15px}
+.end a{color:#b9b3e6}
+.snd{right:clamp(16px,2.2vw,34px);top:clamp(12px,2vw,26px);pointer-events:auto;font:400 12px/1 "SairaSC";letter-spacing:.18em;text-transform:uppercase;color:#c8c4e6;background:none;border:1px solid rgba(185,179,230,.35);padding:8px 12px 7px;cursor:pointer}
+.snd:hover,.snd:focus-visible,.snd[aria-pressed=true]{color:#fff;border-color:#ffb347}
+.cap{left:clamp(16px,2.2vw,34px);bottom:clamp(20px,4vh,44px);max-width:32ch;font-size:clamp(15px,1.15vw,18px);color:#d9d6ee;opacity:0;transform:translateY(8px);transition:opacity .45s,transform .45s}
+.cap.on{opacity:1;transform:none}
+.cap b{display:block;font:400 clamp(26px,3vw,46px)/1 "SairaXC";letter-spacing:.02em;text-transform:uppercase;color:#fff;margin-bottom:8px}
+.garage{left:clamp(16px,2.2vw,34px);bottom:clamp(20px,4vh,44px);display:grid;grid-template-columns:auto 1fr;gap:9px 16px;align-items:center;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s;font:400 13px/1 "SairaSC";letter-spacing:.18em;text-transform:uppercase;color:#c8c4e6}
+.garage.on{opacity:1;transform:none;pointer-events:auto}
+.garage div{display:flex;gap:9px;align-items:center}
+.garage button{min-width:46px;height:18px;border:0;padding:0 8px;background:var(--c,#16152a);color:#fff;font:inherit;letter-spacing:.12em;transform:skewX(-11.31deg);cursor:pointer;outline:1px solid rgba(255,255,255,.22);outline-offset:3px}
+.garage button.txt{height:22px}
+.garage button.sel,.garage button:hover,.garage button:focus-visible{outline:2px solid #fff}
+.home{left:clamp(16px,2.2vw,34px);bottom:clamp(20px,4vh,44px);width:min(560px,calc(100vw - 32px));opacity:0;transform:translateY(8px);transition:opacity .6s,transform .6s}
+.home.on{opacity:1;transform:none;pointer-events:auto}
+.home h1{font:400 clamp(40px,5.4vw,84px)/.9 "SairaXC";text-transform:uppercase;letter-spacing:.01em}
+.home p{font:400 13px/1 "SairaSC";letter-spacing:.22em;text-transform:uppercase;color:#c8c4e6}
+.home ul{list-style:none;border-top:1px solid rgba(185,179,230,.2)}
+.home li{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid rgba(185,179,230,.2)}
+.home li b{font:400 clamp(20px,2vw,28px)/1 "SairaXC";letter-spacing:.03em;text-transform:uppercase}
+.home li span{display:block;margin-top:5px;font-size:14px;color:#9c98bd}
+.home li.off{opacity:.45}
+.home button{font:400 15px/1 "SairaSC";letter-spacing:.14em;text-transform:uppercase;color:#07060d;background:#ffb347;border:0;padding:12px 18px 11px;transform:skewX(-11.31deg);cursor:pointer;white-space:nowrap}
+.home button:hover,.home button:focus-visible{background:#fff1c9;box-shadow:0 0 28px rgba(255,90,31,.7)}
+.code{display:flex;gap:6px;margin-top:12px}
+.code i{font:400 20px/1 "SairaSEBI";font-style:normal;width:30px;height:36px;display:grid;place-items:center;border-bottom:2px solid #35f59b}
+#load{position:fixed;z-index:5;inset:0;background:#020207;display:grid;place-items:center;transition:opacity .9s}
+#load i{width:140px;height:2px;background:#1a1830;overflow:hidden;position:relative}
+#load i::after{content:"";position:absolute;inset:0;background:#ffb347;box-shadow:0 0 12px #ff5a1f;transform:scaleX(var(--k,0));transform-origin:left;transition:transform .3s}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}}
+</style>
+<script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.min.js","three/addons/":"./vendor/three/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="gl" aria-label="A glowing wire runs along a wet night street and threads through the letters HOTWIRE"></canvas>
+<a class="ui studio" href="index.html" aria-label="Back to Rough Games">Rough Games</a>
+<button class="ui snd" id="snd" aria-pressed="false">Sound off</button>
+<div class="ui hint" id="hint"><span>Scroll</span><i></i></div>
+<div class="ui line" id="line"><b>Street combat racing</b>Night city. Six cars. All armed.</div>
+<div class="ui home" id="home"><p>Scroll</p></div>
+<div class="ui cap" data-cap="steer"><b>Your line</b>Move the pointer to steer.</div>
+<div class="ui cap" data-cap="strike"><b>Strike</b>Lock the car ahead. Lightning follows.</div>
+<div class="ui cap" data-cap="seeker"><b>Seeker</b>A homing shot at the car in front.</div>
+<div class="ui cap" data-cap="emp"><b>EMP</b>Their boost, weapons and lights go dark for three seconds.</div>
+<div class="ui cap" data-cap="disc"><b>Disc</b>A mine for whoever is on your tail.</div>
+<div class="ui cap" data-cap="spike"><b>Spike strip</b>Their tyres go. So does their line.</div>
+<div class="ui cap" data-cap="decoy"><b>Decoy</b>A hologram twin takes the lock.</div>
+<div class="ui cap" data-cap="shield"><b>Shield</b>The next one is coming straight at you. Take the hit.</div>
+<div class="ui cap" data-cap="repair"><b>Repair</b>Armour back. Damage gone.</div>
+<div class="ui cap" data-cap="crew"><b>Bring your crew</b>Open a private room, share the code, race your friends.<span class="code" aria-hidden="true"><i>K</i><i>7</i><i>M</i><i>2</i><i>Q</i><i>X</i></span></div>
+<div class="ui garage" id="garage">
+<span>Paint</span><div><button data-k="paint" data-v="#e0a12a" style="--c:#e0a12a" aria-label="Amber paint"></button><button data-k="paint" data-v="#1238c9" style="--c:#1238c9" aria-label="Cobalt paint"></button><button data-k="paint" data-v="#dfe2ea" style="--c:#dfe2ea" aria-label="Silver paint"></button><button data-k="paint" data-v="#b0121a" style="--c:#b0121a" aria-label="Red paint"></button><button data-k="paint" data-v="#0d0e12" style="--c:#0d0e12" aria-label="Black paint"></button></div>
+<span>Rims</span><div><button data-k="rim" data-v="#ffffff" style="--c:#2a2a30" aria-label="Dark rims" class="sel"></button><button data-k="rim" data-v="#d08a44" style="--c:#8a5a2b" aria-label="Bronze rims"></button><button data-k="rim" data-v="#e8ecf6" style="--c:#c9ccd4" aria-label="Silver rims"></button></div>
+<span>Glow</span><div><button data-k="glow" data-v="" class="txt sel">Off</button><button data-k="glow" data-v="#ff5a1f" style="--c:#ff5a1f" aria-label="Ember glow"></button><button data-k="glow" data-v="#8e5bff" style="--c:#8e5bff" aria-label="Violet glow"></button><button data-k="glow" data-v="#2fe0ff" style="--c:#2fe0ff" aria-label="Cyan glow"></button><button data-k="glow" data-v="#35f59b" style="--c:#35f59b" aria-label="Green glow"></button></div>
+<span>Wing</span><div><button data-k="wing" data-v="1" class="txt sel">On</button><button data-k="wing" data-v="0" class="txt">Off</button></div>
+</div>
+<div class="ui end" id="end"><div><img src="assets/logo.png" alt="Hotwire" width="2048" height="626"><p>Coming to the App Store</p><nav><a href="https://hotwire.roughgames.studio/support.html">Support</a><a href="https://hotwire.roughgames.studio/privacy.html">Privacy</a><a href="mailto:support@roughgames.studio">support@roughgames.studio</a></nav><a class="back" href="index.html">Back to Rough Games</a></div></div>
+<div id="load"><i></i></div>
+<div id="track"></div>
+<script type="module" src="main.js"></script>
+</body>
+</html>

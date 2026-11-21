@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rough Games</title>
+<meta name="description" content="Rough Games is an independent game studio. First title: Hotwire: Street Combat.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="site.css">
+<style>#track{height:560vh}</style>
+<script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.min.js","three/addons/":"./vendor/three/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<header class="top"><nav aria-label="Site"><a href="#games" data-go="games">Games</a><a href="studio.html">Studio</a><a href="contact.html">Contact</a></nav></header>
+<main>
+  <h1 class="sr">Rough Games</h1>
+  <a class="sr" id="hotwire" href="hotwire.html">Hotwire: Street Combat, open the game</a>
+  <a class="sr" id="to-studio" href="studio.html">Studio</a>
+  <a class="sr" id="to-contact" href="contact.html">Contact</a>
+  <div id="track"></div>
+</main>
+<div class="slot" aria-hidden="true"><b>01</b>Hotwire: Street Combat<em>Enter</em></div>
+<div class="slot" aria-hidden="true"><b>02</b>In development</div>
+<div class="slot" aria-hidden="true"><b>03</b>In development</div>
+<div class="cue" aria-hidden="true"></div>
+<div class="foot"><span>© 2026 Rough Games</span><a href="mailto:support@roughgames.studio">support@roughgames.studio</a></div>
+<div id="veil"></div>
+<div id="load"></div>
+<script type="module" src="home.js"></script>
+</body>
+</html>

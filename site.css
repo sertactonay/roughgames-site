@@ -1,0 +1,54 @@
+/* Shared by the studio pages (home, studio, contact). The Hotwire page has its own look and does not use this. */
+@font-face{font-family:"Inter";font-weight:400;src:url(assets/fonts/Inter-Regular.otf);font-display:swap}
+@font-face{font-family:"SairaXC";font-weight:700;src:url(assets/fonts/SairaExtraCondensed-Bold.ttf);font-display:swap}
+@font-face{font-family:"SairaSC";font-weight:600;src:url(assets/fonts/SairaSemiCondensed-SemiBold.ttf);font-display:swap}
+:root{--ink:#15110d;--bone:#ece6da;--dust:#b3aa9b;--rust:#c2511f;--bg:#191715;--e:clamp(18px,2.6vw,40px)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--bone)}
+body{font:400 17px/1.5 Inter,system-ui,-apple-system,"Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+canvas#gl{position:fixed;inset:0;width:100%;height:100dvh;display:block;touch-action:pan-y}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--bone);outline-offset:4px}
+main{position:relative;z-index:2;pointer-events:none}
+main a,main button{pointer-events:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+a.sr:focus-visible{position:fixed;left:var(--e);bottom:var(--e);width:auto;height:auto;clip-path:none;z-index:6;background:var(--bone);color:var(--ink);padding:10px 16px;text-decoration:none}
+header.top{transition:opacity .45s;position:fixed;z-index:5;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:baseline;padding:var(--e);pointer-events:none}
+header.top a{pointer-events:auto;text-decoration:none;position:relative}
+header.top::before{content:"";position:absolute;left:0;right:0;top:0;height:150%;background:linear-gradient(to bottom,rgba(14,12,10,.9),rgba(14,12,10,.55) 55%,rgba(14,12,10,0));pointer-events:none}
+.brand{font:700 21px/1 SairaXC,"Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase}
+header.top nav{display:flex;gap:clamp(16px,2vw,30px);font-size:14px;letter-spacing:.04em;margin-left:auto}
+header.top nav a{padding-bottom:4px;border-bottom:1px solid transparent;text-shadow:0 1px 12px rgba(0,0,0,.8)}
+header.top nav a:hover,header.top nav a:focus-visible,header.top nav a[aria-current]{border-color:var(--rust)}
+#veil{position:fixed;inset:0;z-index:9;background:#050403;opacity:0;pointer-events:none}
+#load{position:fixed;inset:0;z-index:8;background:var(--bg);transition:opacity .9s}
+.cue{position:fixed;z-index:3;left:50%;bottom:var(--e);width:1px;height:54px;background:rgba(236,230,218,.25);overflow:hidden;opacity:0;transition:opacity .6s;pointer-events:none}
+.cue::after{content:"";position:absolute;left:0;top:-40%;width:1px;height:40%;background:var(--bone);animation:cue 1.9s cubic-bezier(.6,0,.3,1) infinite}
+@keyframes cue{to{top:100%}}
+.foot{position:fixed;z-index:3;left:var(--e);right:var(--e);bottom:var(--e);display:flex;justify-content:space-between;gap:20px;font-size:13px;color:var(--dust);opacity:0;text-shadow:0 1px 12px rgba(0,0,0,.9)}
+.foot a{color:var(--bone);text-decoration:none;border-bottom:1px solid rgba(236,230,218,.3)}
+.slot{position:fixed;z-index:1;left:0;top:0;margin-top:-8px;font:600 12px/1.3 SairaSC,Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(236,230,218,.6);white-space:nowrap;pointer-events:none;transition:color .25s;text-shadow:0 1px 8px rgba(0,0,0,.9)}
+.slot b{font-weight:600;color:var(--bone);margin-right:.9em}
+.slot em{font-style:normal;margin-left:1.2em;color:var(--ink);background:var(--bone);padding:3px 9px 2px;opacity:0;transition:opacity .25s}
+.slot.hot{color:#fff}.slot.hot em{opacity:1}
+@media (prefers-reduced-motion:reduce){.cue::after{animation:none;top:30%}}
+/* pages you walk through while the text passes (studio) */
+.walk section{min-height:118vh;display:flex;align-items:flex-end;padding:0 var(--e) 16vh}
+.walk section.open{min-height:100vh}
+.walk section.last{min-height:100vh;padding-bottom:22vh}
+.say{width:min(560px,100%);padding:clamp(22px,2.6vw,36px) clamp(20px,2.4vw,34px) clamp(20px,2.4vw,32px);background:rgba(18,15,12,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:3px solid var(--rust)}
+.say.wide{width:min(980px,100%)}
+.say h2{font:700 clamp(40px,5.2vw,78px)/.95 SairaXC,"Arial Narrow",sans-serif;letter-spacing:.02em;text-transform:uppercase;margin-bottom:.38em}
+.say p{font-size:clamp(17px,1.35vw,20px);line-height:1.55;max-width:46ch}
+.say p+p{margin-top:1em}
+.say .quiet{color:var(--dust);font-size:15px}
+.say a.title{display:block;font:700 clamp(26px,2.6vw,38px)/1.05 SairaXC,"Arial Narrow",sans-serif;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;margin-bottom:.3em;color:#fff}
+.say a.title:hover,.say a.title:focus-visible{color:var(--rust)}
+.say a.go{display:inline-block;margin-top:.4em;font:600 15px/1 SairaSC,Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--ink);background:var(--bone);padding:15px 26px 14px;transition:background .2s,color .2s}
+.say a.go:hover,.say a.go:focus-visible{background:var(--rust);color:#fff}
+.say dl{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(18px,2.4vw,36px)}
+.say dt{font:600 15px/1.25 SairaSC,Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;padding-bottom:.7em;margin-bottom:.8em;border-bottom:1px solid rgba(236,230,218,.22)}
+.say dd{font-size:16px;line-height:1.55;color:#d9d2c5}
+@media (max-width:760px){.say dl{grid-template-columns:1fr}.walk section{padding-bottom:9vh}}
+.hint{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(var(--e) + 46px);width:max-content;max-width:calc(100% - 2*var(--e));text-align:center;font-size:15px;color:var(--bone);background:rgba(18,15,12,.82);padding:10px 18px;opacity:0;transition:opacity .6s;pointer-events:none}
+.foot::before{content:"";position:absolute;z-index:-1;left:calc(-1*var(--e));right:calc(-1*var(--e));bottom:calc(-1*var(--e));height:calc(100% + 3.2*var(--e));background:linear-gradient(to top,rgba(14,12,10,.88),rgba(14,12,10,0));pointer-events:none}

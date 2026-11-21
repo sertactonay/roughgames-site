@@ -1,0 +1,3 @@
+Surface textures in this folder are from Poly Haven (polyhaven.com), licence CC0 (public domain):
+cast and plain: "Concrete Layers 02" (plain = lightened)  rust: "Rust Coarse 01"  shutter: "Painted Metal Shutter"
+Resized and repacked (m = ambient occlusion in red, roughness in green).
