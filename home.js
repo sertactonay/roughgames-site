@@ -30,7 +30,7 @@ const name = [...W.word('ROUGH', 0, 2.6, 0, 0.5, 0.9, steel), ...W.word('GAMES',
 name.forEach((L, i) => { L.thr = 0.006 + i * 0.013; L.y = L.grp.position.y; L.a = 0; L.kick = 0; L.grp.visible = false; });      // the page opens on a bare wall; each letter is driven in at its own point of the scroll
 // what a letter knocks out of the wall when it lands
 const BN = 480, bp = new Float32Array(BN * 3), bv = new Float32Array(BN * 3), bl = new Float32Array(BN); let bi = 0; for (let i = 0; i < BN; i++) bp[i * 3 + 1] = -999;
-const grit = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(bp, 3)), new THREE.PointsMaterial({ color: 0xcfcac0, size: 0.085, sizeAttenuation: true })); grit.frustumCulled = false; scene.add(grit);
+const grit = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(bp, 3)), new THREE.PointsMaterial({ color: 0xcfcac0, size: W.phone ? 0.06 : 0.085, sizeAttenuation: true })); grit.frustumCulled = false; scene.add(grit);
 function burst(L) { for (let k = 0; k < 34; k++) { const j = bi = (bi + 1) % BN, ang = rnd() * 6.283, r = 0.9 + rnd() * 0.9; bp[j * 3] = L.cx + Math.cos(ang) * r; bp[j * 3 + 1] = L.grp.position.y + 1.5 + Math.sin(ang) * r * 1.4; bp[j * 3 + 2] = 0.15;
   bv[j * 3] = Math.cos(ang) * (1 + rnd() * 3); bv[j * 3 + 1] = Math.sin(ang) * (1 + rnd() * 3) + 1.5; bv[j * 3 + 2] = 1.5 + rnd() * 5; bl[j] = 0.7 + rnd() * 0.7; } }
 const IMP = { shake: 0, flash: 0 };
@@ -112,11 +112,11 @@ W.start((dt, go) => {
   const bx = port ? mix(-7.2, 7.2, pan * pan * (3 - 2 * pan)) : 0;
 
   // camera: the name; under the overhang to the bays; down to the doors. Going into a game or a door pushes through it.
-  const zA = Math.max(21, fit(7.3)), yA = port ? LIFT + 1.6 : -2.45 + zA * tan, lift = port ? LIFT : yA - 2.5;      // the lower edge of the opening view stays above the overhang's underside: nothing under the name wall shows
+  const zA = Math.max(21, fit(port ? 7.9 : 7.3)), yA = port ? LIFT + 1.6 : -2.45 + zA * tan, lift = port ? LIFT : yA - 2.5;      // the lower edge of the opening view stays above the overhang's underside: nothing under the name wall shows
   P.set(0, yA, zA).lerp(v.set(bx, -5.5, port ? fit(3.1) + ZB : Math.max(13.5, fit(11.3) + ZB)), w1).lerp(v.set(0, port ? -10.6 : -12.0, Math.max(12.5, fit(port ? 5.9 : 7) + ZB)), w2);
   T.set(0, yA, 0).lerp(v.set(bx, -6.0, ZB), w1).lerp(v.set(0, port ? -10.2 : -12.5, ZB), w2);
   if (!port && !reduce) P.z -= 3.2 * Math.sin(Math.PI * w1);
-  P.x += W.px * 0.8 * (1 - go) + Math.sin(W.time * 97) * 0.16 * IMP.shake; P.y -= W.py * 0.4 * (1 - go) * w1 + Math.sin(W.time * 131) * 0.1 * IMP.shake * (0.3 + 0.7 * w1); if (!reduce) P.z -= 2.2 * ss(0, 0.14, t) * (1 - w1);     // each landing shakes the camera; it creeps in while the name is built
+  P.x += W.px * (port ? 0.25 + 0.55 * w1 : 0.8) * (1 - go) + Math.sin(W.time * 97) * (port ? 0.07 : 0.16) * IMP.shake; P.y -= W.py * 0.4 * (1 - go) * w1 + Math.sin(W.time * 131) * 0.1 * IMP.shake * (0.3 + 0.7 * w1); if (!reduce && !port) P.z -= 2.2 * ss(0, 0.14, t) * (1 - w1);     // each landing shakes the camera; it creeps in while the name is built
   const tg = W.target; if (tg && go > 0) { const cy = (tg.y0 + tg.y1) / 2 - (tg.href ? 0.8 : 0); P.lerp(v.set(tg.x, cy, ZB + 2.6), go); T.lerp(v.set(tg.x, cy, ZB - 3), go); }
   camera.position.copy(P); camera.lookAt(T);
 

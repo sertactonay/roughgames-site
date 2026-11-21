@@ -27,7 +27,8 @@ const washerGeo = new THREE.CylinderGeometry(0.105, 0.105, 0.016, 24), headGeo =
 const ZF = 0.176, ZC = 0.224;                    // the plate's face, and the render lying over it
 
 W.facade(-60, 60, -27, 45, 0, 2, { face: wall, body: cast, pour: () => [0, 0], ties: false });
-const name = W.word('CONTACT', 0, 2.75, 0, 0.26, 0.45, steel);
+const nameGrp = new THREE.Group(); scene.add(nameGrp);        // on an upright phone the word shrinks to the plates' width and heads one column
+const name = W.word('CONTACT', 0, 2.75, 0, 0.26, 0.45, steel, nameGrp);
 
 /* ---------- the plates ---------- */
 const PW = 3.6, PH = 1.8, MW = 512, MH = 256, XS = [-4.2, 0, 4.2];
@@ -95,7 +96,8 @@ W.start((dt, go) => {
   const t = W.t, asp = camera.aspect, port = asp < 1, fov = port ? 58 : 34, tan = Math.tan(fov * Math.PI / 360);
   if (camera.fov !== fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
   PLATES.forEach((p, i) => p.grp.position.set(port ? 0 : XS[i], port ? -0.9 - 2.4 * i : -0.1, 0));
-  if (port) { const a = ss(0.03, 0.3, t), d = clamp((t - 0.3) / 0.7); P.set(0, 3.2, 5.7 / (tan * asp)).lerp(v.set(0, mix(-0.9, -5.7, d), 2.15 / (tan * asp)), a); T.set(0, 3.2, 0).lerp(v.set(0, mix(-0.9, -5.7, d), 0), a); }
+  nameGrp.scale.setScalar(port ? 0.42 : 1); nameGrp.position.y = port ? 0.5 - 2.75 * 0.42 : 0;
+  if (port) { const y = mix(-0.5, -5.2, clamp(t)); P.set(0, y, 2.15 / (tan * asp)); T.set(0, y, 0); }
   else { const z = Math.max(7.0 / (tan * asp), 3.7 / tan); P.set(W.px * 0.6, 1.45 - W.py * 0.3, z); T.set(0, 1.45, 0); }
   camera.position.copy(P); camera.lookAt(T);
   W.idle = [0, port ? 0 : 0.15, 0.4, 0.3]; W.aimLamp(0);
@@ -119,9 +121,9 @@ W.start((dt, go) => {
 
   const since = W.shownAt != null ? W.time - W.shownAt : -1;
   name.forEach((L, i) => { const k = clamp((since - 0.2 - i * 0.07) / 0.5); L.grp.position.z = reduce ? 0 : (1 - k) * (1 - k) * 6; L.grp.visible = k > 0 || reduce; });
-  if (hint) hint.style.opacity = (since > 1.2 && !PLATES.every(p => p.done) ? 1 : 0) * (port ? ss(0.2, 0.32, t) : 1);
+  if (hint) hint.style.opacity = (since > 1.2 && !PLATES.every(p => p.done) ? 1 : 0);
   if (foot) { const f = port ? ss(0.9, 0.99, t) : 1; foot.style.opacity = f; foot.style.pointerEvents = f > 0.5 ? 'auto' : 'none'; }
-  const cue = document.querySelector('.cue'); if (cue) cue.style.opacity = port ? (since > 1.6 ? 1 : 0) * (1 - ss(0, 0.03, W.raw)) : 0;
+  const cue = document.querySelector('.cue'); if (cue) cue.style.opacity = 0;
 });
 window.HOME = W; W.PLATES = PLATES;
 W.rect = i => { const p = PLATES[i].grp.position, a = new THREE.Vector3(p.x - PW / 2, p.y + PH / 2, 0.12).project(camera), b = new THREE.Vector3(p.x + PW / 2, p.y - PH / 2, 0.12).project(camera); return [(a.x + 1) / 2, (1 - a.y) / 2, (b.x + 1) / 2, (1 - b.y) / 2].map(n => +n.toFixed(3)); };     // for tests: a plate's place on screen
